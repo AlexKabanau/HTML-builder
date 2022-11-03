@@ -2,34 +2,44 @@ const fs = require('fs');
 const path = require('path');
 
 fs.readdir(path.join(__dirname, '/secret-folder'), {withFileTypes: true}, (err, files) => {
-  if (err) {
-    throw err;
-  } else {
-    for (let file of files) {
-      // console.log(file)
-      if (file.isFile() === true) {
-        (async () => {
-          const name = path.basename(file.name, path.extname(file.name));
-          const extname = path.extname(file.name).split('.').join('');
-          const size = await fs.promises.stat(path.join(__dirname, `/secret-folder/${file.name}`)).then(stats => {return stats.size});
-          // console.log(name, '-', extname, '-', size, 'b');
-          console.log(`${name} - ${extname} - ${size}b`)
-        })();
-        
-        
-        // let promise = new Promise(resolve => {fs.stat(path.join(__dirname, `/secret-folder/${file.name}`)), (err, stats) => {
-        //   resolve(stats)
-        // }});
-        // const size = promise.then(
-        //   stats => {return stats.size}
-        // );
+  if(err){
+    console.log(err);
+  } else{
+    for(let file of files) {
+      if(file.isFile() === true){
+        const name = path.basename(file.name , path.extname(file.name));
+        const extName = path.extname(file.name).split('.').join('');
+        let size;
 
-        // const stats = fs.stat(path.join(__dirname, `/secret-folder/${file.name}`), (err, stats) => {
-        //   return stats
-        // });
-       
+        let myPromise = new Promise((resolve, reject) => {
+          let fsPath = path.join(__dirname,`/secret-folder/${file.name}`);
+          let fsOptions = { bigint: false };
+          let fsCallback = (err, stats) => {
+            if (err) {
+               console.log(err);
+               reject(err);
+            } else {
+              // console.log('1', stats);
+              resolve(stats);
+            }
+          };
+
+        fs.stat(fsPath, fsOptions, fsCallback);
+        });
+        // size = myPromise.then(data => { return (data.size)});
+        myPromise.then(data => { 
+          // console.log (data.size);
+          size = data.size;
+          console.log(`${name} - ${extName} - ${size/1000}kb`);
+        })
+        // myPromise.then(data => {return size = data["size"]})
+        // const size = myPromise.then(data => { return data.size})
+        // const size = myPromise.then((stats)=>{return stats["size"]});
+        // setTimeout(()=>{
+        //   console.log(`${name} - ${extName} - ${size}b`);
+        // },10);
+        
       }
-      
     }
   }
 });
