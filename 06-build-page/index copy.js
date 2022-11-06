@@ -126,9 +126,8 @@ function createHTML() {
 
 
 //попытка №2
-  // let myPromise = new Promise (resolve => {
+  let myPromise = new Promise (resolve => {
     let htmlContent;
-    let arr = [];
     // fs.readFile(currentFile, 'utf-8', (err, data) => {
     readStream.on('data', (data) => {
       let html = data.toString();
@@ -149,50 +148,31 @@ function createHTML() {
             }
           };
           fs.readFile(fsPath, fsCallback);
-        });
-        arr.push(myNewPromise);
+        })
 
         myNewPromise.then(data => {
           content = data;
           html = html.replace(matches[i], content.toString());
-          // console.log(matches.length-1);
-          // if (i===2) {
+          console.log(matches.length-1);
+          if (i===2) {
 
-          //   writeStream.write(html);
-          // }
+            writeStream.write(html);
+          }
           // console.log(html.toString());
           // return html
           htmlContent = html;
         })
       }
       // console.log(htmlContent)
-      // resolve(htmlContent);
-
-      // Promise.all(arr).then(data => {
-      //   console.log(data.toString())
-      //   writeStream.write(data.toString());
-      // })
-
-      // resolve(Promise.all(arr).then(finalData => {
-      //   console.log(finalData.toString());
-      //   return finalData;
-      // }))
-
-      Promise.all(arr).then(() => {
-        // console.log(htmlContent.toString())
-        // resolve(htmlContent);
-        writeStream.write(htmlContent);
-
-      })
-
+      resolve(htmlContent);
     });
     
-  // });
+  });
 
-  // myPromise.then(data => {
-  //   // console.log(data)
-  //   // writeStream.write(data);
-  // })
+  myPromise.then(data => {
+    console.log(data)
+    // writeStream.write(data);
+  })
 
 
 
