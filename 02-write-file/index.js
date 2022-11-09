@@ -6,7 +6,9 @@ const rl = readline.createInterface({
     output: process.stdout
  });
 //  let data = '';
-
+fs.appendFile(
+  path.join(__dirname, 'mynotes.txt'), '', () => {}
+);
 console.log("Hello, put your test");
 rl.on('line', (input) => {
   if (input === 'exit') {
